@@ -4,14 +4,15 @@ from llm.llm import llm_analyze
 
 
 def orchestrate(logs):
+
     cleaned_logs = log_agent(logs)
 
-    threat_output = threat_agent(cleaned_logs)
+    threat_data = threat_agent(cleaned_logs)
 
-    llm_output = llm_analyze(threat_output)
+    ai_output = llm_analyze(threat_data)
 
-    return{
+    return {
         "logs": cleaned_logs,
-        "threat_analysis": threat_output,
-        "ai_insight": llm_output
+        "threat_analysis": threat_data,
+        "ai_insight": ai_output
     }
