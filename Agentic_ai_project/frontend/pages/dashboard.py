@@ -39,7 +39,8 @@ with col2:
     st.metric("Threats Detected", threats)
 
 with col3:
-    st.metric("Risk Level", "HIGH" if threats > 0 else "LOW")
+    risk = "HIGH" if threats > 0 else "LOW"
+    st.metric("Risk Level", risk)
 
 st.subheader("🧠 AI Insight")
 

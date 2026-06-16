@@ -5,9 +5,36 @@ from agents.orchestrator import orchestrate
 app = FastAPI()
 
 
+@app.post("/register")
+async def register(request: Request):
+    payload = await request.json()
+
+    name = payload.get("Name")
+    email = payload.get("Email")
+    password = payload.get("Password")
+
+    if not name or not email or not password:
+        return {"status": "error", "message": "All fields required"}
+
+    existing = supabase.table("register") \
+        .select("*") \
+        .eq("Email", email) \
+        .execute()
+
+    if existing.data:
+        return {"status": "error", "message": "User already exists"}
+
+    res = supabase.table("register").insert({
+        "Name": name,
+        "Email": email,
+        "Password": password
+    }).execute()
+
+    return {"status": "success", "data": res.data}
+
+
 @app.post("/login")
 async def login(request: Request):
-
     payload = await request.json()
 
     Email = payload.get("Email")
@@ -24,7 +51,7 @@ async def login(request: Request):
             "user_email": Email,
             "event": "LOGIN_FAILED",
             "source_ip": "127.0.0.1",
-            "log_data": "Invalid login",
+            "log_data": "Invalid login attempt",
             "log_type": "AUTH",
             "severity": "MEDIUM",
             "is_threat": True
@@ -38,19 +65,13 @@ async def login(request: Request):
         "user_email": Email,
         "event": "LOGIN_SUCCESS",
         "source_ip": "127.0.0.1",
-        "log_data": "User logged in",
+        "log_data": "User logged in successfully",
         "log_type": "AUTH",
         "severity": "LOW",
         "is_threat": False
     }).execute()
 
     return {"status": "success", "user": user}
-
-
-@app.get("/logs")
-async def get_logs():
-    res = supabase.table("logs").select("*").execute()
-    return {"status": "success", "data": res.data}
 
 
 @app.get("/run_pipeline")

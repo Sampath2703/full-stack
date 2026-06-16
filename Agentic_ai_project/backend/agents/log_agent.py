@@ -1,5 +1,4 @@
 def log_agent(logs):
-
     return [
         {
             "id": log.get("id"),

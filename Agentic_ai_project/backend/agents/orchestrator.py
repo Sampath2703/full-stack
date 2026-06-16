@@ -6,9 +6,7 @@ from llm.llm import llm_analyze
 def orchestrate(logs):
 
     cleaned_logs = log_agent(logs)
-
     threat_data = threat_agent(cleaned_logs)
-
     ai_output = llm_analyze(threat_data)
 
     return {
